@@ -1,25 +1,73 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    // Singleton instance
+    private static GameManager instance;
     public int ballSequence = 1;
+    
 
+    // Property to access the singleton instance
+    public static GameManager Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<GameManager>();
+
+                if (instance == null)
+                {
+                    GameObject singletonObject = new GameObject();
+                    instance = singletonObject.AddComponent<GameManager>();
+                    singletonObject.name = typeof(GameManager).ToString() + " (Singleton)";
+
+                    DontDestroyOnLoad(singletonObject);
+                }
+            }
+
+            return instance;
+        }
+    }
+
+    // Ensure only one instance of the GameManager exists
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    // Your game management code here
     void Start()
     {
-        
+        // Initialize your game manager
     }
 
-    // Update is called once per frame
     void Update()
     {
+        // Update your game manager
+        ResetBallSequence(ballSequence);
         
     }
 
-    void changeBall(int ballSequence)
+    public void ResetBallSequence(int ballSequence)
     {
+        if (ballSequence == 4)
+        {
+            GameManager.Instance.ballSequence = 1;
+        }
+    }
 
+    public IEnumerator WaitForSecondsCoroutine(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
     }
 }
