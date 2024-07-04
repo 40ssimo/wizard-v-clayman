@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
     // Singleton instance
     private static GameManager instance;
     public int ballSequence = 1;
+    public bool levelClear = false;
     
 
     // Property to access the singleton instance
@@ -49,25 +50,27 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         // Initialize your game manager
+        LevelStart();
     }
 
     void Update()
     {
         // Update your game manager
-        ResetBallSequence(ballSequence);
+        
         
     }
 
-    public void ResetBallSequence(int ballSequence)
+    
+
+    public void LevelStart()
     {
-        if (ballSequence == 4)
-        {
-            GameManager.Instance.ballSequence = 1;
-        }
+        levelClear = false;
+        ballSequence = 1;
     }
 
-    public IEnumerator WaitForSecondsCoroutine(float seconds)
+    public void LevelEnd()
     {
-        yield return new WaitForSeconds(seconds);
+        levelClear = true;
     }
+   
 }

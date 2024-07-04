@@ -11,7 +11,7 @@ public class CanonballBehaviour : MonoBehaviour
     private Rigidbody _rb;
     private float _zAxisFactor = 1f; // Factor to control how much Z changes based on Y
     public bool isLaunched = false;
-    public bool isSpawned = false;
+    public bool isReady = false;
     
 
     void Start()
@@ -23,7 +23,7 @@ public class CanonballBehaviour : MonoBehaviour
 
     void Update()
     {
-        if (_isDragging && !isLaunched)
+        if (_isDragging && !isLaunched && (isReady == true))
         {
             Vector3 mousePosition = Input.mousePosition;
             mousePosition.z = Camera.main.ScreenToWorldPoint(transform.position).z;
@@ -41,13 +41,16 @@ public class CanonballBehaviour : MonoBehaviour
 
     private void OnMouseDown()
     {
-        _isDragging = true;
-        isSpawned = true;
+        if (isReady == true)
+        {
+            _isDragging = true;
+        }
+        
     }
 
     private void OnMouseUp()
     {
-        if (!isLaunched)
+        if (!isLaunched && isReady)
         {
             _rb.constraints = RigidbodyConstraints.None;
 
@@ -55,25 +58,36 @@ public class CanonballBehaviour : MonoBehaviour
             Vector3 direction = _initialPosition - releasePosition;
             float force = direction.magnitude * 10; // Adjust this multiplier to control the force
             _rb.AddForce(direction.normalized * force, ForceMode.Impulse);
+
+            if (GameManager.Instance.ballSequence < 4)
+            {
+                GameManager.Instance.ballSequence += 1;
+                ChangeCanonball(GameManager.Instance.ballSequence);
+                isLaunched = true;
+                _isDragging = false;
+                isReady = false;
+            } 
+            
+            if (GameManager.Instance.ballSequence == 4)
+            {
+                GameManager.Instance.LevelEnd();
+            }
         }
-        
-        isLaunched = true;
-        _isDragging = false;
-
-        GameManager.Instance.ballSequence += 1;
-
-        ChangeCanonball();
     }
 
-    public void ChangeCanonball()
+    public void ChangeCanonball(int ballSequence)
     {
-        StartCoroutine(SetPosition());
+        StartCoroutine(SetPosition(ballSequence));
     }
 
-    IEnumerator SetPosition()
+    IEnumerator SetPosition(int ballSequence)
     {
-        yield return new WaitForSeconds(3);
-        GameObject moveBall = GameObject.Find("Canonball " + GameManager.Instance.ballSequence.ToString());
-        moveBall.transform.position = _initialPosition;
+        if (ballSequence < 4)
+        {
+            yield return new WaitForSeconds(3);
+            GameObject moveBall = GameObject.Find("Canonball " + GameManager.Instance.ballSequence.ToString());
+            moveBall.transform.position = _initialPosition;
+            moveBall.GetComponent<CanonballBehaviour>().isReady = true;
+        }
     }
 }

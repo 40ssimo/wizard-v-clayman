@@ -121,6 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isLaunched: 0
+  isReady: 0
 --- !u!54 &6325701072492285473
 Rigidbody:
   m_ObjectHideFlags: 0
