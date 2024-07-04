@@ -46,6 +46,7 @@ public class VirtualCameraFollow : MonoBehaviour
         if (!(GameManager.Instance.ballSequence > 3))
         {
             vCamFollow.Follow = GameObject.Find("Canonball " + (GameManager.Instance.ballSequence).ToString()).transform;
+            yield break;
         }
         
     }

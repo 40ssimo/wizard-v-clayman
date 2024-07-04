@@ -12,11 +12,17 @@ public class CanonballBehaviour : MonoBehaviour
     public bool isLaunched = false;
     public bool isReady = false;
     public bool isStoppedLaunched = false;
+    private Animator animator;
+    public GameObject fire;
+    
+
 
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
         _initialPosition = new Vector3(0.05f, 2.5f, 4.5f);
+        animator = GameObject.FindGameObjectWithTag("Player").GetComponent<Animator>();
+        
     }
 
     void Update()
@@ -29,7 +35,7 @@ public class CanonballBehaviour : MonoBehaviour
 
             Vector3 dragVector = worldPosition - _initialPosition;
 
-            // Adjust the Z axis based on the Y axis movement
+            
             float zAdjustment = dragVector.y * _zAxisFactor;
             transform.position = new Vector3(_initialPosition.x + dragVector.x, _initialPosition.y + dragVector.y, _initialPosition.z + zAdjustment);
         }
@@ -37,9 +43,12 @@ public class CanonballBehaviour : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (isReady)
+        if (isReady && GameObject.Find("VirtualCameraOne").GetComponent<CinemachineVirtualCamera>().enabled == true)
         {
             _isDragging = true;
+            animator.SetBool("OnClickDown", true);
+            GameManager.Instance._redRing.SetActive(true);
+            fire.SetActive(true);
         }
     }
 
@@ -52,7 +61,7 @@ public class CanonballBehaviour : MonoBehaviour
 
             Vector3 releasePosition = transform.position;
             Vector3 direction = _initialPosition - releasePosition;
-            float force = direction.magnitude * 10; // Adjust this multiplier to control the force
+            float force = direction.magnitude * 10; 
             _rb.AddForce(direction.normalized * force, ForceMode.Impulse);
 
             
@@ -62,16 +71,21 @@ public class CanonballBehaviour : MonoBehaviour
             _isDragging = false;
             isReady = false;
 
-            // Start the coroutine to check the ball's stop condition after a delay
+            animator.SetBool("OnClickUp", true);
+            animator.SetBool("OnClickDown", false);
+
+            GameManager.Instance._redRing.SetActive(false);
+
+
             StartCoroutine(CheckBallStop());
         }
     }
 
     private IEnumerator CheckBallStop()
     {
-        // Wait for 1 second before starting to check the velocity
+        
         yield return new WaitForSeconds(1f);
-
+        animator.SetBool("OnClickUp", false);
         while (true)
         {
             if (_rb.velocity.magnitude < 0.5f)
@@ -81,7 +95,7 @@ public class CanonballBehaviour : MonoBehaviour
                 yield break;
             }
 
-            // Check the velocity every 0.1 seconds
+           
             yield return new WaitForSeconds(0.1f);
         }
     }
@@ -94,6 +108,7 @@ public class CanonballBehaviour : MonoBehaviour
         {
             GameManager.Instance.ballSequence += 1;
             ChangeCanonball(GameManager.Instance.ballSequence);
+           
         }
         else
         {
@@ -115,5 +130,14 @@ public class CanonballBehaviour : MonoBehaviour
             moveBall.transform.position = _initialPosition;
             moveBall.GetComponent<CanonballBehaviour>().isReady = true;
         }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Destroy(collision.gameObject);
+        }
+
     }
 }

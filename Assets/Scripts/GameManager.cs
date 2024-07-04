@@ -8,10 +8,9 @@ public class GameManager : MonoBehaviour
     private static GameManager instance;
     public int ballSequence = 1;
     public bool levelClear = false;
-    
+    public GameObject _redRing;
 
 
-    // Property to access the singleton instance
     public static GameManager Instance
     {
         get
@@ -34,7 +33,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Ensure only one instance of the GameManager exists
+    
     private void Awake()
     {
         if (instance == null)
@@ -48,16 +47,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Your game management code here
+
     void Start()
     {
-        // Initialize your game manager
         LevelStart();
+        
     }
 
     void Update()
     {
-        // Update your game manager
+     
         
         
     }
