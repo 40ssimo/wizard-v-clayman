@@ -1,6 +1,7 @@
 using Cinemachine;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class GameManager : MonoBehaviour
     public int ballSequence = 1;
     public bool levelClear = false;
     public GameObject _redRing;
+    public AudioSource audioSource;
 
 
     public static GameManager Instance
@@ -56,7 +58,10 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-     
+        if (ballSequence == 4)
+        {
+            LevelEnd();
+        }
         
         
     }
@@ -82,6 +87,10 @@ public class GameManager : MonoBehaviour
         var virtualCameraTwo = GameObject.Find("VirtualCameraTwo").GetComponent<CinemachineVirtualCamera>().enabled = false;
     }
 
-    
+    public void RestartGame()
+    {
+        StopAllCoroutines();
+        SceneManager.LoadScene(1, LoadSceneMode.Single);
+    }
    
 }

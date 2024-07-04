@@ -14,13 +14,13 @@ public class CanonballBehaviour : MonoBehaviour
     public bool isStoppedLaunched = false;
     private Animator animator;
     public GameObject fire;
-    
-
+    public AudioSource audioSource;
+    public ParticleSystem explosion;
 
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
-        _initialPosition = new Vector3(0.05f, 2.5f, 4.5f);
+        _initialPosition = new Vector3(0.05f, 3f, 5f);
         animator = GameObject.FindGameObjectWithTag("Player").GetComponent<Animator>();
         
     }
@@ -49,6 +49,7 @@ public class CanonballBehaviour : MonoBehaviour
             animator.SetBool("OnClickDown", true);
             GameManager.Instance._redRing.SetActive(true);
             fire.SetActive(true);
+            AudioManager.instance.PlaySound(audioSource, AudioManager.instance.audioList[1]);
         }
     }
 
@@ -61,7 +62,7 @@ public class CanonballBehaviour : MonoBehaviour
 
             Vector3 releasePosition = transform.position;
             Vector3 direction = _initialPosition - releasePosition;
-            float force = direction.magnitude * 10; 
+            float force = direction.magnitude * 7.5f; 
             _rb.AddForce(direction.normalized * force, ForceMode.Impulse);
 
             
@@ -75,6 +76,7 @@ public class CanonballBehaviour : MonoBehaviour
             animator.SetBool("OnClickDown", false);
 
             GameManager.Instance._redRing.SetActive(false);
+            AudioManager.instance.PlaySound(audioSource, AudioManager.instance.audioList[3]);
 
 
             StartCoroutine(CheckBallStop());
@@ -136,8 +138,21 @@ public class CanonballBehaviour : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
+            AudioManager.instance.PlaySound(audioSource, AudioManager.instance.audioList[0]);
+            explosion.Play();
+            
             Destroy(collision.gameObject);
         }
 
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Powerup"))
+        {
+            gameObject.transform.localScale = new Vector3(4, 4, 4);
+            AudioManager.instance.PlaySound(audioSource, AudioManager.instance.audioList[4]);
+            Destroy(other.gameObject);
+        }
     }
 }
