@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ public class GameManager : MonoBehaviour
     private static GameManager instance;
     public int ballSequence = 1;
     public bool levelClear = false;
-    
+
 
     // Property to access the singleton instance
     public static GameManager Instance
@@ -66,11 +67,19 @@ public class GameManager : MonoBehaviour
     {
         levelClear = false;
         ballSequence = 1;
+        StartCoroutine(CameraMovement());
     }
 
     public void LevelEnd()
     {
         levelClear = true;
+    }
+
+    IEnumerator CameraMovement()
+    {
+        var virtualCameraThree = GameObject.Find("VirtualCameraThree").GetComponent<CinemachineVirtualCamera>().enabled = false;
+        yield return new WaitForSeconds(3);
+        var virtualCameraTwo = GameObject.Find("VirtualCameraTwo").GetComponent<CinemachineVirtualCamera>().enabled = false;
     }
    
 }
