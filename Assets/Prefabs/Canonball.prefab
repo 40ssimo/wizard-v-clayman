@@ -122,6 +122,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isLaunched: 0
   isReady: 0
+  isStoppedLaunched: 0
 --- !u!54 &6325701072492285473
 Rigidbody:
   m_ObjectHideFlags: 0

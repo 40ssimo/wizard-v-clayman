@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     private static GameManager instance;
     public int ballSequence = 1;
     public bool levelClear = false;
+    
 
 
     // Property to access the singleton instance
@@ -81,5 +82,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(3);
         var virtualCameraTwo = GameObject.Find("VirtualCameraTwo").GetComponent<CinemachineVirtualCamera>().enabled = false;
     }
+
+    
    
 }
